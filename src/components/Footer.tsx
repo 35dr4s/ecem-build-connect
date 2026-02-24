@@ -1,13 +1,13 @@
 import { MapPin, Phone, Mail } from "lucide-react";
 import logoEcem from "@/assets/logo-ecem.png";
 
-const Footer = () => (
-  <footer className="bg-foreground border-t-4 border-primary">
+const Footer = () =>
+<footer className="bg-foreground border-t-4 border-primary">
     <div className="container mx-auto section-padding py-12">
       <div className="grid md:grid-cols-3 gap-8">
         {/* Brand */}
         <div>
-          <img src={logoEcem} alt="ECEM Construções" className="h-12 w-auto mb-4" />
+          <img alt="ECEM Construções" className="h-12 w-auto mb-4" src="/lovable-uploads/6750172e-a812-400e-a1e0-3db4798ac6fa.png" />
           <p className="font-body text-sm text-primary-foreground/60">
             Construções, Terceirização de Mão de Obra e Locação de Equipamentos.
           </p>
@@ -48,7 +48,7 @@ const Footer = () => (
         </p>
       </div>
     </div>
-  </footer>
-);
+  </footer>;
+
 
 export default Footer;
