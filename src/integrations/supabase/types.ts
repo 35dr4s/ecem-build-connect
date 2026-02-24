@@ -14,7 +14,155 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      equipment: {
+        Row: {
+          available: boolean
+          category: string
+          created_at: string
+          daily_rate: number | null
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+        }
+        Insert: {
+          available?: boolean
+          category?: string
+          created_at?: string
+          daily_rate?: number | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+        }
+        Update: {
+          available?: boolean
+          category?: string
+          created_at?: string
+          daily_rate?: number | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      equipment_rentals: {
+        Row: {
+          actual_return: string | null
+          created_at: string
+          daily_rate: number
+          equipment_id: string
+          expected_return: string | null
+          id: string
+          notes: string | null
+          renter_name: string
+          renter_phone: string | null
+          start_date: string
+          status: string
+        }
+        Insert: {
+          actual_return?: string | null
+          created_at?: string
+          daily_rate: number
+          equipment_id: string
+          expected_return?: string | null
+          id?: string
+          notes?: string | null
+          renter_name: string
+          renter_phone?: string | null
+          start_date?: string
+          status?: string
+        }
+        Update: {
+          actual_return?: string | null
+          created_at?: string
+          daily_rate?: number
+          equipment_id?: string
+          expected_return?: string | null
+          id?: string
+          notes?: string | null
+          renter_name?: string
+          renter_phone?: string | null
+          start_date?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_rentals_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_requests: {
+        Row: {
+          created_at: string
+          description: string | null
+          email: string | null
+          estimated_value: number | null
+          id: string
+          name: string
+          phone: string
+          service_type: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          estimated_value?: number | null
+          id?: string
+          name: string
+          phone: string
+          service_type: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          estimated_value?: number | null
+          id?: string
+          name?: string
+          phone?: string
+          service_type?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          approved: boolean
+          author_name: string
+          company: string | null
+          content: string
+          created_at: string
+          id: string
+          rating: number | null
+        }
+        Insert: {
+          approved?: boolean
+          author_name: string
+          company?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          rating?: number | null
+        }
+        Update: {
+          approved?: boolean
+          author_name?: string
+          company?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          rating?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
