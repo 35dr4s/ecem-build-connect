@@ -97,6 +97,54 @@ export type Database = {
           },
         ]
       }
+      leads: {
+        Row: {
+          address: string
+          city: string
+          cpf_cnpj: string
+          created_at: string
+          email: string
+          estimated_value: number | null
+          full_name: string
+          id: string
+          person_type: string
+          phone: string
+          receipt_number: number
+          service_reference: string
+          state: string
+        }
+        Insert: {
+          address: string
+          city: string
+          cpf_cnpj: string
+          created_at?: string
+          email: string
+          estimated_value?: number | null
+          full_name: string
+          id?: string
+          person_type?: string
+          phone: string
+          receipt_number?: number
+          service_reference: string
+          state: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          cpf_cnpj?: string
+          created_at?: string
+          email?: string
+          estimated_value?: number | null
+          full_name?: string
+          id?: string
+          person_type?: string
+          phone?: string
+          receipt_number?: number
+          service_reference?: string
+          state?: string
+        }
+        Relationships: []
+      }
       service_requests: {
         Row: {
           created_at: string
