@@ -11,12 +11,14 @@ import {
   Menu,
   X,
   HardHat,
+  Users,
 } from "lucide-react";
 import logoEcem from "@/assets/logo-ecem.png";
 
 const navItems = [
   { title: "Locação", url: "/admin", icon: LayoutDashboard },
   { title: "Serviços", url: "/admin/servicos", icon: Wrench },
+  { title: "Leads", url: "/admin/leads", icon: Users },
   { title: "Financeiro", url: "/admin/financeiro", icon: DollarSign },
 ];
 

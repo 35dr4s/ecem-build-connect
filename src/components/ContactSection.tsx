@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, TreePine, Truck, Paintbrush, Mountain, Flame, Snowflake } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import LeadCaptureModal from "@/components/LeadCaptureModal";
 
 const serviceOptions = [
   { value: "podagem", label: "Podagem", icon: TreePine },
@@ -16,14 +18,35 @@ const ContactSection = () => {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", phone: "", email: "", service: "", message: "" });
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
+  const handleServiceClick = (value: string, label: string) => {
+    setSelectedService(`Serviço de ${label}`);
+    setModalOpen(true);
+    setForm({ ...form, service: value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.service) {
+      toast({ title: "Selecione um serviço", variant: "destructive" });
+      return;
+    }
     setLoading(true);
-    // Simulate submission (backend integration later)
-    await new Promise((r) => setTimeout(r, 1000));
-    toast({ title: "Solicitação enviada!", description: "Entraremos em contato em breve." });
-    setForm({ name: "", phone: "", email: "", service: "", message: "" });
+    const { error } = await supabase.from("service_requests").insert({
+      name: form.name,
+      phone: form.phone,
+      email: form.email || null,
+      service_type: form.service,
+      description: form.message,
+    });
+    if (error) {
+      toast({ title: "Erro ao enviar", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Solicitação enviada!", description: "Entraremos em contato em breve." });
+      setForm({ name: "", phone: "", email: "", service: "", message: "" });
+    }
     setLoading(false);
   };
 
@@ -44,13 +67,13 @@ const ContactSection = () => {
         </motion.div>
 
         <div className="max-w-2xl mx-auto">
-          {/* Service selector */}
+          {/* Service selector — triggers lead capture */}
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8">
             {serviceOptions.map((s) => (
               <button
                 key={s.value}
                 type="button"
-                onClick={() => setForm({ ...form, service: s.value })}
+                onClick={() => handleServiceClick(s.value, s.label)}
                 className={`flex flex-col items-center gap-1 p-3 rounded-sm border transition-all text-center ${
                   form.service === s.value
                     ? "border-primary bg-primary/10 text-primary"
@@ -108,6 +131,8 @@ const ContactSection = () => {
           </form>
         </div>
       </div>
+
+      <LeadCaptureModal open={modalOpen} onOpenChange={setModalOpen} serviceReference={selectedService} />
     </section>
   );
 };

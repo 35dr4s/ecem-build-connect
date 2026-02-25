@@ -12,6 +12,7 @@ const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const RentalDashboard = lazy(() => import("./pages/admin/RentalDashboard"));
 const ServicesDashboard = lazy(() => import("./pages/admin/ServicesDashboard"));
 const FinancialDashboard = lazy(() => import("./pages/admin/FinancialDashboard"));
+const LeadsDashboard = lazy(() => import("./pages/admin/LeadsDashboard"));
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<RentalDashboard />} />
               <Route path="servicos" element={<ServicesDashboard />} />
+              <Route path="leads" element={<LeadsDashboard />} />
               <Route path="financeiro" element={<FinancialDashboard />} />
             </Route>
             <Route path="*" element={<NotFound />} />
