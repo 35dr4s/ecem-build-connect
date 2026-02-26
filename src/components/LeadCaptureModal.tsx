@@ -11,6 +11,7 @@ interface LeadCaptureModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   serviceReference: string;
+  onSuccess?: () => void;
 }
 
 const formatCPF = (v: string) => {
@@ -45,7 +46,7 @@ const brStates = [
   "PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
 ];
 
-const LeadCaptureModal = ({ open, onOpenChange, serviceReference }: LeadCaptureModalProps) => {
+const LeadCaptureModal = ({ open, onOpenChange, serviceReference, onSuccess }: LeadCaptureModalProps) => {
   const [personType, setPersonType] = useState<"pf" | "pj">("pf");
   const [form, setForm] = useState({
     fullName: "", cpfCnpj: "", address: "", city: "", state: "", phone: "", email: "",
@@ -101,9 +102,13 @@ const LeadCaptureModal = ({ open, onOpenChange, serviceReference }: LeadCaptureM
       toast({ title: "Erro ao cadastrar", description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: "Cadastro realizado!", description: "Agora você pode acessar os detalhes do serviço." });
     setForm({ fullName: "", cpfCnpj: "", address: "", city: "", state: "", phone: "", email: "" });
-    onOpenChange(false);
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      toast({ title: "Cadastro realizado!", description: "Agora você pode acessar os detalhes do serviço." });
+      onOpenChange(false);
+    }
   };
 
   const switchType = (type: "pf" | "pj") => {
@@ -121,24 +126,17 @@ const LeadCaptureModal = ({ open, onOpenChange, serviceReference }: LeadCaptureM
           </p>
         </DialogHeader>
 
-        {/* PF / PJ toggle */}
         <div className="flex rounded-md border border-border overflow-hidden">
-          <button
-            type="button"
-            onClick={() => switchType("pf")}
+          <button type="button" onClick={() => switchType("pf")}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-display tracking-wider transition-colors ${
               personType === "pf" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
-          >
+            }`}>
             <User className="w-4 h-4" /> Pessoa Física
           </button>
-          <button
-            type="button"
-            onClick={() => switchType("pj")}
+          <button type="button" onClick={() => switchType("pj")}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-display tracking-wider transition-colors ${
               personType === "pj" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
-          >
+            }`}>
             <Building2 className="w-4 h-4" /> Empresa
           </button>
         </div>
@@ -149,23 +147,16 @@ const LeadCaptureModal = ({ open, onOpenChange, serviceReference }: LeadCaptureM
             <Input value={form.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder={personType === "pf" ? "João da Silva" : "ECEM Construções LTDA"} />
             {errors.fullName && <p className="text-xs text-destructive mt-1">{errors.fullName}</p>}
           </div>
-
           <div>
             <Label>{personType === "pf" ? "CPF" : "CNPJ"}</Label>
-            <Input
-              value={form.cpfCnpj}
-              onChange={(e) => handleDocChange(e.target.value)}
-              placeholder={personType === "pf" ? "000.000.000-00" : "00.000.000/0000-00"}
-            />
+            <Input value={form.cpfCnpj} onChange={(e) => handleDocChange(e.target.value)} placeholder={personType === "pf" ? "000.000.000-00" : "00.000.000/0000-00"} />
             {errors.cpfCnpj && <p className="text-xs text-destructive mt-1">{errors.cpfCnpj}</p>}
           </div>
-
           <div>
             <Label>Endereço</Label>
             <Input value={form.address} onChange={(e) => set("address", e.target.value)} placeholder="Rua, Nº, Bairro" />
             {errors.address && <p className="text-xs text-destructive mt-1">{errors.address}</p>}
           </div>
-
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Cidade</Label>
@@ -174,18 +165,14 @@ const LeadCaptureModal = ({ open, onOpenChange, serviceReference }: LeadCaptureM
             </div>
             <div>
               <Label>Estado</Label>
-              <select
-                value={form.state}
-                onChange={(e) => set("state", e.target.value)}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
+              <select value={form.state} onChange={(e) => set("state", e.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <option value="">UF</option>
                 {brStates.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
               {errors.state && <p className="text-xs text-destructive mt-1">{errors.state}</p>}
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Telefone</Label>
@@ -198,7 +185,6 @@ const LeadCaptureModal = ({ open, onOpenChange, serviceReference }: LeadCaptureM
               {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
             </div>
           </div>
-
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Cadastrando...</> : "Cadastrar e Acessar"}
           </Button>

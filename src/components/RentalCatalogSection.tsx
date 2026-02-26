@@ -1,25 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Forklift, Hammer, Container, Wrench, Construction, Truck } from "lucide-react";
+import { Forklift, Plus } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
-
-const equipment = [
-  { icon: Forklift, name: "Retroescavadeira", desc: "Para escavações e terraplanagem" },
-  { icon: Construction, name: "Guindaste", desc: "Movimentação de cargas pesadas" },
-  { icon: Container, name: "Contêiner", desc: "Armazenamento em obra" },
-  { icon: Hammer, name: "Martelete", desc: "Demolição e perfuração" },
-  { icon: Wrench, name: "Compactador", desc: "Compactação de solo" },
-  { icon: Truck, name: "Caminhão Munck", desc: "Transporte e içamento" },
-];
+import SuccessOverlay from "@/components/SuccessOverlay";
 
 const RentalCatalogSection = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [equipment, setEquipment] = useState<{ id: string; name: string; description: string | null }[]>([]);
+
+  useEffect(() => {
+    supabase.from("equipment").select("id, name, description").eq("available", true).order("name")
+      .then(({ data }) => { if (data) setEquipment(data); });
+  }, []);
 
   const handleClick = (name: string) => {
     setSelectedService(`Locação de ${name}`);
     setModalOpen(true);
   };
+
+  const handleLeadSuccess = useCallback(() => {
+    setModalOpen(false);
+    setShowSuccess(true);
+  }, []);
 
   return (
     <section id="locacao" className="section-padding bg-foreground">
@@ -43,7 +48,7 @@ const RentalCatalogSection = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {equipment.map((eq, i) => (
             <motion.div
-              key={eq.name}
+              key={eq.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -52,25 +57,31 @@ const RentalCatalogSection = () => {
               className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-sm p-6 text-center hover:border-primary/50 transition-all group cursor-pointer"
             >
               <div className="w-16 h-16 bg-primary/15 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/25 transition-colors">
-                <eq.icon className="w-8 h-8 text-primary" />
+                <Forklift className="w-8 h-8 text-primary" />
               </div>
               <h3 className="font-display text-lg font-bold text-primary-foreground mb-1">{eq.name}</h3>
-              <p className="font-body text-sm text-primary-foreground/60">{eq.desc}</p>
+              <p className="font-body text-sm text-primary-foreground/60">{eq.description || ""}</p>
             </motion.div>
           ))}
-        </div>
 
-        <div className="text-center mt-10">
-          <button
+          {/* + button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             onClick={() => { setSelectedService("Locação de Equipamentos"); setModalOpen(true); }}
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-display tracking-wider px-8 py-3 rounded-sm transition-colors"
+            className="bg-primary-foreground/5 border-2 border-dashed border-primary-foreground/20 rounded-sm p-6 text-center hover:border-primary/50 transition-all group cursor-pointer flex flex-col items-center justify-center min-h-[160px]"
           >
-            Solicitar Locação
-          </button>
+            <div className="w-16 h-16 bg-primary/15 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/25 transition-colors">
+              <Plus className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="font-display text-sm font-bold text-primary-foreground/60">Solicitar Outro</h3>
+          </motion.div>
         </div>
       </div>
 
-      <LeadCaptureModal open={modalOpen} onOpenChange={setModalOpen} serviceReference={selectedService} />
+      <LeadCaptureModal open={modalOpen} onOpenChange={setModalOpen} serviceReference={selectedService} onSuccess={handleLeadSuccess} />
+      <SuccessOverlay show={showSuccess} onDone={() => setShowSuccess(false)} message="Sua solicitação de locação foi enviada, entraremos em contato brevemente." />
     </section>
   );
 };
