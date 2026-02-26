@@ -181,6 +181,33 @@ export type Database = {
         }
         Relationships: []
       }
+      services: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       testimonials: {
         Row: {
           approved: boolean
