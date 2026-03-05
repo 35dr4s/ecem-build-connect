@@ -93,12 +93,27 @@ const Header = () => {
                   {item.label}
                 </button>
             )}
-              <button
-                onClick={() => { setMobileOpen(false); navigate("/cadastro"); }}
-                className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
-                <LogIn className="w-4 h-4" />
-                Login
-              </button>
+              {isLogged ? (
+                <div className="flex items-center justify-between gap-3 mt-2">
+                  <span className="flex items-center gap-1 text-primary text-sm font-display">
+                    <UserCheck className="w-4 h-4" />
+                    {lead?.fullName.split(" ")[0]}
+                  </span>
+                  <button
+                    onClick={() => { setMobileOpen(false); clearLead(); }}
+                    className="flex items-center gap-1 text-primary-foreground/60 hover:text-primary text-sm font-display tracking-wider transition-colors">
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setMobileOpen(false); navigate("/cadastro"); }}
+                  className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </button>
+              )}
             </nav>
           </motion.div>
         }
