@@ -40,13 +40,12 @@ const Header = () => {
               {item.label}
             </button>
           )}
-          <a
-            href="tel:84996273986"
+          <button
+            onClick={() => navigate("/cadastro")}
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm font-display text-sm tracking-wider hover:bg-primary/90 transition-colors">
-
-            <Phone className="w-4 h-4" />
-            Ligar Agora
-          </a>
+            <LogIn className="w-4 h-4" />
+            Login
+          </button>
         </nav>
 
         {/* Mobile toggle */}
