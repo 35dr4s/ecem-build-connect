@@ -76,13 +76,12 @@ const Header = () => {
                   {item.label}
                 </button>
             )}
-              <a
-              href="tel:84996273986"
-              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
-
-                <Phone className="w-4 h-4" />
-                Ligar Agora
-              </a>
+              <button
+                onClick={() => { setMobileOpen(false); navigate("/cadastro"); }}
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
+                <LogIn className="w-4 h-4" />
+                Login
+              </button>
             </nav>
           </motion.div>
         }

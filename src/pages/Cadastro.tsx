@@ -108,11 +108,11 @@ const Cadastro = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted p-4">
-      {showSuccess && (
-        <SuccessOverlay
-          message="Seu cadastro foi realizado com sucesso! Agora você pode solicitar serviços e locações."
-          onClose={() => setShowSuccess(false)}
-        />
+      <SuccessOverlay
+        show={showSuccess}
+        onDone={() => setShowSuccess(false)}
+        message="Seu cadastro foi realizado com sucesso! Agora você pode solicitar serviços e locações."
+      />
       )}
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-2">
