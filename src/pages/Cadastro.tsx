@@ -102,6 +102,16 @@ const Cadastro = () => {
       return;
     }
     setForm({ fullName: "", cpfCnpj: "", address: "", city: "", state: "", phone: "", email: "" });
+    saveLead({
+      fullName: form.fullName.trim(),
+      phone: form.phone,
+      email: form.email.trim(),
+      cpfCnpj: form.cpfCnpj,
+      personType,
+      city: form.city.trim(),
+      state: form.state,
+      address: form.address.trim(),
+    });
     setShowSuccess(true);
   };
 
