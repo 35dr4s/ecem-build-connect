@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Menu, X, LogIn } from "lucide-react";
+import { Menu, X, LogIn, LogOut, UserCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import logoEcem from "@/assets/logo-ecem.png";
+import { useLeadSession } from "@/hooks/use-lead-session";
 
 const navItems = [
 { label: "Início", href: "#inicio" },
