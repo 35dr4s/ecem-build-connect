@@ -4,12 +4,18 @@ import { Forklift, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import SuccessOverlay from "@/components/SuccessOverlay";
+import ServiceConfirmDialog from "@/components/ServiceConfirmDialog";
+import { useLeadSession } from "@/hooks/use-lead-session";
+import { useToast } from "@/hooks/use-toast";
 
 const RentalCatalogSection = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [equipment, setEquipment] = useState<{ id: string; name: string; description: string | null }[]>([]);
+  const { lead, isLogged } = useLeadSession();
+  const { toast } = useToast();
 
   useEffect(() => {
     supabase.from("equipment").select("id, name, description").eq("available", true).order("name")
@@ -17,8 +23,34 @@ const RentalCatalogSection = () => {
   }, []);
 
   const handleClick = (name: string) => {
-    setSelectedService(`Locação de ${name}`);
-    setModalOpen(true);
+    const service = `Locação de ${name}`;
+    setSelectedService(service);
+    if (isLogged) {
+      setConfirmOpen(true);
+    } else {
+      setModalOpen(true);
+    }
+  };
+
+  const handleConfirm = async () => {
+    setConfirmOpen(false);
+    if (!lead) return;
+    const { error } = await supabase.from("leads" as any).insert({
+      person_type: lead.personType,
+      full_name: lead.fullName,
+      cpf_cnpj: lead.cpfCnpj,
+      address: lead.address,
+      city: lead.city,
+      state: lead.state,
+      phone: lead.phone,
+      email: lead.email,
+      service_reference: selectedService,
+    });
+    if (error) {
+      toast({ title: "Erro ao solicitar", description: error.message, variant: "destructive" });
+    } else {
+      setShowSuccess(true);
+    }
   };
 
   const handleLeadSuccess = useCallback(() => {
@@ -64,12 +96,11 @@ const RentalCatalogSection = () => {
             </motion.div>
           ))}
 
-          {/* + button */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            onClick={() => { setSelectedService("Locação de Equipamentos"); setModalOpen(true); }}
+            onClick={() => handleClick("Equipamentos")}
             className="bg-primary-foreground/5 border-2 border-dashed border-primary-foreground/20 rounded-sm p-6 text-center hover:border-primary/50 transition-all group cursor-pointer flex flex-col items-center justify-center min-h-[160px]"
           >
             <div className="w-16 h-16 bg-primary/15 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/25 transition-colors">
@@ -81,6 +112,7 @@ const RentalCatalogSection = () => {
       </div>
 
       <LeadCaptureModal open={modalOpen} onOpenChange={setModalOpen} serviceReference={selectedService} onSuccess={handleLeadSuccess} />
+      <ServiceConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} serviceName={selectedService} onConfirm={handleConfirm} />
       <SuccessOverlay show={showSuccess} onDone={() => setShowSuccess(false)} message="Sua solicitação de locação foi enviada, entraremos em contato brevemente." />
     </section>
   );
