@@ -42,12 +42,27 @@ const Header = () => {
               {item.label}
             </button>
           )}
-          <button
-            onClick={() => navigate("/cadastro")}
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm font-display text-sm tracking-wider hover:bg-primary/90 transition-colors">
-            <LogIn className="w-4 h-4" />
-            Login
-          </button>
+          {isLogged ? (
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1 text-primary text-sm font-display">
+                <UserCheck className="w-4 h-4" />
+                {lead?.fullName.split(" ")[0]}
+              </span>
+              <button
+                onClick={clearLead}
+                className="flex items-center gap-1 text-primary-foreground/60 hover:text-primary text-sm font-display tracking-wider transition-colors">
+                <LogOut className="w-4 h-4" />
+                Sair
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate("/cadastro")}
+              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm font-display text-sm tracking-wider hover:bg-primary/90 transition-colors">
+              <LogIn className="w-4 h-4" />
+              Login
+            </button>
+          )}
         </nav>
 
         {/* Mobile toggle */}
