@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Building2, Loader2, UserPlus } from "lucide-react";
 import SuccessOverlay from "@/components/SuccessOverlay";
+import { useLeadSession } from "@/hooks/use-lead-session";
 
 const formatCPF = (v: string) => {
   const d = v.replace(/\D/g, "").slice(0, 11);
