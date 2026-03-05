@@ -124,8 +124,8 @@ const Cadastro = () => {
     <div className="min-h-screen flex items-center justify-center bg-muted p-4">
       <SuccessOverlay
         show={showSuccess}
-        onDone={() => setShowSuccess(false)}
-        message="Seu cadastro foi realizado com sucesso! Agora você pode solicitar serviços e locações."
+        onDone={() => navigate("/")}
+        message="Seu cadastro foi realizado com sucesso! Redirecionando..."
       />
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-2">
