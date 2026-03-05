@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Menu, X, LogIn } from "lucide-react";
+import { Menu, X, LogIn, LogOut, UserCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import logoEcem from "@/assets/logo-ecem.png";
+import { useLeadSession } from "@/hooks/use-lead-session";
 
 const navItems = [
 { label: "Início", href: "#inicio" },
@@ -15,6 +16,7 @@ const navItems = [
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const { lead, isLogged, clearLead } = useLeadSession();
 
   const scrollTo = (href: string) => {
     setMobileOpen(false);
@@ -40,12 +42,27 @@ const Header = () => {
               {item.label}
             </button>
           )}
-          <button
-            onClick={() => navigate("/cadastro")}
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm font-display text-sm tracking-wider hover:bg-primary/90 transition-colors">
-            <LogIn className="w-4 h-4" />
-            Login
-          </button>
+          {isLogged ? (
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1 text-primary text-sm font-display">
+                <UserCheck className="w-4 h-4" />
+                {lead?.fullName.split(" ")[0]}
+              </span>
+              <button
+                onClick={clearLead}
+                className="flex items-center gap-1 text-primary-foreground/60 hover:text-primary text-sm font-display tracking-wider transition-colors">
+                <LogOut className="w-4 h-4" />
+                Sair
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate("/cadastro")}
+              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm font-display text-sm tracking-wider hover:bg-primary/90 transition-colors">
+              <LogIn className="w-4 h-4" />
+              Login
+            </button>
+          )}
         </nav>
 
         {/* Mobile toggle */}
@@ -76,12 +93,27 @@ const Header = () => {
                   {item.label}
                 </button>
             )}
-              <button
-                onClick={() => { setMobileOpen(false); navigate("/cadastro"); }}
-                className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
-                <LogIn className="w-4 h-4" />
-                Login
-              </button>
+              {isLogged ? (
+                <div className="flex items-center justify-between gap-3 mt-2">
+                  <span className="flex items-center gap-1 text-primary text-sm font-display">
+                    <UserCheck className="w-4 h-4" />
+                    {lead?.fullName.split(" ")[0]}
+                  </span>
+                  <button
+                    onClick={() => { setMobileOpen(false); clearLead(); }}
+                    className="flex items-center gap-1 text-primary-foreground/60 hover:text-primary text-sm font-display tracking-wider transition-colors">
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setMobileOpen(false); navigate("/cadastro"); }}
+                  className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </button>
+              )}
             </nav>
           </motion.div>
         }

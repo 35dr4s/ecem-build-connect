@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import SuccessOverlay from "@/components/SuccessOverlay";
+import ServiceConfirmDialog from "@/components/ServiceConfirmDialog";
+import { useLeadSession } from "@/hooks/use-lead-session";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   TreePine, Truck, Paintbrush, Mountain, Flame, Snowflake, Wrench,
@@ -15,9 +17,11 @@ const ContactSection = () => {
   const [form, setForm] = useState({ name: "", phone: "", email: "", service: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [services, setServices] = useState<{ id: string; name: string; icon: string | null }[]>([]);
+  const { lead, isLogged } = useLeadSession();
 
   useEffect(() => {
     supabase.from("services" as any).select("id, name, icon").eq("active", true).order("name")
@@ -25,9 +29,35 @@ const ContactSection = () => {
   }, []);
 
   const handleServiceClick = (name: string) => {
-    setSelectedService(`Serviço de ${name}`);
-    setModalOpen(true);
+    const service = `Serviço de ${name}`;
+    setSelectedService(service);
     setForm({ ...form, service: name });
+    if (isLogged) {
+      setConfirmOpen(true);
+    } else {
+      setModalOpen(true);
+    }
+  };
+
+  const handleConfirm = async () => {
+    setConfirmOpen(false);
+    if (!lead) return;
+    const { error } = await supabase.from("leads" as any).insert({
+      person_type: lead.personType,
+      full_name: lead.fullName,
+      cpf_cnpj: lead.cpfCnpj,
+      address: lead.address,
+      city: lead.city,
+      state: lead.state,
+      phone: lead.phone,
+      email: lead.email,
+      service_reference: selectedService,
+    });
+    if (error) {
+      toast({ title: "Erro ao solicitar", description: error.message, variant: "destructive" });
+    } else {
+      setShowSuccess(true);
+    }
   };
 
   const handleLeadSuccess = useCallback(() => {
@@ -75,7 +105,6 @@ const ContactSection = () => {
         </motion.div>
 
         <div className="max-w-2xl mx-auto">
-          {/* Service selector */}
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-8">
             {services.map((s) => {
               const Icon = iconMap[s.icon || "Wrench"] || Wrench;
@@ -95,10 +124,17 @@ const ContactSection = () => {
                 </button>
               );
             })}
-            {/* + button */}
             <button
               type="button"
-              onClick={() => { setSelectedService("Serviço Geral"); setModalOpen(true); }}
+              onClick={() => {
+                const service = "Serviço Geral";
+                setSelectedService(service);
+                if (isLogged) {
+                  setConfirmOpen(true);
+                } else {
+                  setModalOpen(true);
+                }
+              }}
               className="flex flex-col items-center gap-1 p-3 rounded-sm border-2 border-dashed border-border bg-card text-muted-foreground hover:border-primary/30 transition-all text-center"
             >
               <Plus className="w-5 h-5" />
@@ -141,6 +177,7 @@ const ContactSection = () => {
       </div>
 
       <LeadCaptureModal open={modalOpen} onOpenChange={setModalOpen} serviceReference={selectedService} onSuccess={handleLeadSuccess} />
+      <ServiceConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} serviceName={selectedService} onConfirm={handleConfirm} />
       <SuccessOverlay show={showSuccess} onDone={() => setShowSuccess(false)} message="Sua solicitação de serviço foi enviada, entraremos em contato brevemente." />
     </section>
   );

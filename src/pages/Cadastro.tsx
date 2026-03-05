@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Building2, Loader2, UserPlus } from "lucide-react";
 import SuccessOverlay from "@/components/SuccessOverlay";
+import { useLeadSession } from "@/hooks/use-lead-session";
 
 const formatCPF = (v: string) => {
   const d = v.replace(/\D/g, "").slice(0, 11);
@@ -49,6 +51,8 @@ const Cadastro = () => {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { saveLead } = useLeadSession();
 
   const set = (field: string, value: string) => {
     setForm((p) => ({ ...p, [field]: value }));
@@ -98,6 +102,16 @@ const Cadastro = () => {
       return;
     }
     setForm({ fullName: "", cpfCnpj: "", address: "", city: "", state: "", phone: "", email: "" });
+    saveLead({
+      fullName: form.fullName.trim(),
+      phone: form.phone,
+      email: form.email.trim(),
+      cpfCnpj: form.cpfCnpj,
+      personType,
+      city: form.city.trim(),
+      state: form.state,
+      address: form.address.trim(),
+    });
     setShowSuccess(true);
   };
 
@@ -110,8 +124,8 @@ const Cadastro = () => {
     <div className="min-h-screen flex items-center justify-center bg-muted p-4">
       <SuccessOverlay
         show={showSuccess}
-        onDone={() => setShowSuccess(false)}
-        message="Seu cadastro foi realizado com sucesso! Agora você pode solicitar serviços e locações."
+        onDone={() => navigate("/")}
+        message="Seu cadastro foi realizado com sucesso! Redirecionando..."
       />
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-2">
