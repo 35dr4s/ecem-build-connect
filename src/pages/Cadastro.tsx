@@ -113,7 +113,6 @@ const Cadastro = () => {
         onDone={() => setShowSuccess(false)}
         message="Seu cadastro foi realizado com sucesso! Agora você pode solicitar serviços e locações."
       />
-      )}
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-2">
           <img alt="ECEM" className="h-14 mx-auto" src="/lovable-uploads/576a8aed-2d82-4089-b1fa-cdfd0102fe38.png" />
