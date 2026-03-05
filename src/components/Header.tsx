@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import logoEcem from "@/assets/logo-ecem.png";
 
 const navItems = [
@@ -13,6 +14,7 @@ const navItems = [
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollTo = (href: string) => {
     setMobileOpen(false);
@@ -38,13 +40,12 @@ const Header = () => {
               {item.label}
             </button>
           )}
-          <a
-            href="tel:84996273986"
+          <button
+            onClick={() => navigate("/cadastro")}
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm font-display text-sm tracking-wider hover:bg-primary/90 transition-colors">
-
-            <Phone className="w-4 h-4" />
-            Ligar Agora
-          </a>
+            <LogIn className="w-4 h-4" />
+            Login
+          </button>
         </nav>
 
         {/* Mobile toggle */}
@@ -75,13 +76,12 @@ const Header = () => {
                   {item.label}
                 </button>
             )}
-              <a
-              href="tel:84996273986"
-              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
-
-                <Phone className="w-4 h-4" />
-                Ligar Agora
-              </a>
+              <button
+                onClick={() => { setMobileOpen(false); navigate("/cadastro"); }}
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-sm font-display text-sm tracking-wider justify-center mt-2">
+                <LogIn className="w-4 h-4" />
+                Login
+              </button>
             </nav>
           </motion.div>
         }

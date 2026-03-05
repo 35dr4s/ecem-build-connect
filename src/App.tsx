@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 const Login = lazy(() => import("./pages/Login"));
+const Cadastro = lazy(() => import("./pages/Cadastro"));
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const RentalDashboard = lazy(() => import("./pages/admin/RentalDashboard"));
 const ServicesDashboard = lazy(() => import("./pages/admin/ServicesDashboard"));
@@ -25,6 +26,7 @@ const App = () => (
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Carregando...</div>}>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<RentalDashboard />} />
