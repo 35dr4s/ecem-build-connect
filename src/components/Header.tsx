@@ -16,6 +16,7 @@ const navItems = [
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const { lead, isLogged, clearLead } = useLeadSession();
 
   const scrollTo = (href: string) => {
     setMobileOpen(false);
