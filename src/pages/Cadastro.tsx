@@ -51,6 +51,8 @@ const Cadastro = () => {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { saveLead } = useLeadSession();
 
   const set = (field: string, value: string) => {
     setForm((p) => ({ ...p, [field]: value }));
