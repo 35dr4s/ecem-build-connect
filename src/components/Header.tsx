@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, LogIn, LogOut, UserCheck } from "lucide-react";
+import { Menu, X, LogIn, LogOut, UserCheck, ClipboardList } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import logoEcem from "@/assets/logo-ecem.png";
