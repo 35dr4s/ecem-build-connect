@@ -44,6 +44,12 @@ const Header = () => {
           )}
           {isLogged ? (
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/meus-pedidos")}
+                className="flex items-center gap-1 text-primary text-sm font-display tracking-wider hover:text-primary/80 transition-colors">
+                <ClipboardList className="w-4 h-4" />
+                Meus Pedidos
+              </button>
               <span className="flex items-center gap-1 text-primary text-sm font-display">
                 <UserCheck className="w-4 h-4" />
                 {lead?.fullName.split(" ")[0]}
