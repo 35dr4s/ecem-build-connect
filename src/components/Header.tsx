@@ -100,17 +100,25 @@ const Header = () => {
                 </button>
             )}
               {isLogged ? (
-                <div className="flex items-center justify-between gap-3 mt-2">
-                  <span className="flex items-center gap-1 text-primary text-sm font-display">
-                    <UserCheck className="w-4 h-4" />
-                    {lead?.fullName.split(" ")[0]}
-                  </span>
+                <div className="flex flex-col gap-2 mt-2">
                   <button
-                    onClick={() => { setMobileOpen(false); clearLead(); }}
-                    className="flex items-center gap-1 text-primary-foreground/60 hover:text-primary text-sm font-display tracking-wider transition-colors">
-                    <LogOut className="w-4 h-4" />
-                    Sair
+                    onClick={() => { setMobileOpen(false); navigate("/meus-pedidos"); }}
+                    className="flex items-center gap-2 text-primary text-sm font-display tracking-wider py-2">
+                    <ClipboardList className="w-4 h-4" />
+                    Meus Pedidos
                   </button>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex items-center gap-1 text-primary text-sm font-display">
+                      <UserCheck className="w-4 h-4" />
+                      {lead?.fullName.split(" ")[0]}
+                    </span>
+                    <button
+                      onClick={() => { setMobileOpen(false); clearLead(); }}
+                      className="flex items-center gap-1 text-primary-foreground/60 hover:text-primary text-sm font-display tracking-wider transition-colors">
+                      <LogOut className="w-4 h-4" />
+                      Sair
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <button
