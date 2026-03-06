@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 const Login = lazy(() => import("./pages/Login"));
 const Cadastro = lazy(() => import("./pages/Cadastro"));
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
+const MeusPedidos = lazy(() => import("./pages/MeusPedidos"));
 const RentalDashboard = lazy(() => import("./pages/admin/RentalDashboard"));
 const ServicesDashboard = lazy(() => import("./pages/admin/ServicesDashboard"));
 const FinancialDashboard = lazy(() => import("./pages/admin/FinancialDashboard"));
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/meus-pedidos" element={<MeusPedidos />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<RentalDashboard />} />
               <Route path="servicos" element={<ServicesDashboard />} />
