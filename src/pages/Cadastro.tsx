@@ -43,10 +43,13 @@ const brStates = [
 ];
 
 const Cadastro = () => {
+  const [mode, setMode] = useState<"register" | "login">("register");
   const [personType, setPersonType] = useState<"pf" | "pj">("pf");
   const [form, setForm] = useState({
     fullName: "", cpfCnpj: "", address: "", city: "", state: "", phone: "", email: "",
   });
+  const [loginForm, setLoginForm] = useState({ email: "", cpfCnpj: "" });
+  const [loginPersonType, setLoginPersonType] = useState<"pf" | "pj">("pf");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
