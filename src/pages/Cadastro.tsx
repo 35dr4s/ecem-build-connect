@@ -123,6 +123,103 @@ const Cadastro = () => {
     set("cpfCnpj", "");
   };
 
+  const handleLoginDocChange = (value: string) => {
+    const formatted = loginPersonType === "pf" ? formatCPF(value) : formatCNPJ(value);
+    setLoginForm((p) => ({ ...p, cpfCnpj: formatted }));
+    setErrors((p) => ({ ...p, cpfCnpj: "" }));
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginForm.email)) errs.email = "E-mail inválido";
+    if (!loginForm.cpfCnpj.trim()) errs.cpfCnpj = "Obrigatório";
+    else if (loginPersonType === "pf" && !validateCPF(loginForm.cpfCnpj)) errs.cpfCnpj = "CPF inválido";
+    else if (loginPersonType === "pj" && !validateCNPJ(loginForm.cpfCnpj)) errs.cpfCnpj = "CNPJ inválido";
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("leads" as any)
+      .select("*")
+      .eq("email", loginForm.email.trim())
+      .eq("cpf_cnpj", loginForm.cpfCnpj)
+      .maybeSingle();
+    setLoading(false);
+
+    if (error || !data) {
+      toast({ title: "Cadastro não encontrado", description: "Verifique seu e-mail e CPF/CNPJ ou faça um novo cadastro.", variant: "destructive" });
+      return;
+    }
+
+    const lead = data as any;
+    saveLead({
+      id: lead.id,
+      fullName: lead.full_name,
+      phone: lead.phone,
+      email: lead.email,
+      cpfCnpj: lead.cpf_cnpj,
+      personType: lead.person_type,
+      city: lead.city,
+      state: lead.state,
+      address: lead.address,
+    });
+    toast({ title: `Bem-vindo de volta, ${lead.full_name.split(" ")[0]}!` });
+    navigate("/");
+  };
+
+  if (mode === "login") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center space-y-2">
+            <img alt="ECEM" className="h-14 mx-auto" src="/lovable-uploads/576a8aed-2d82-4089-b1fa-cdfd0102fe38.png" />
+            <CardTitle className="flex items-center justify-center gap-2 text-xl">
+              <User className="h-5 w-5 text-primary" />
+              Entrar na sua conta
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Use seu e-mail e CPF/CNPJ para acessar</p>
+          </CardHeader>
+          <CardContent>
+            <div className="flex rounded-md border border-border overflow-hidden mb-4">
+              <button type="button" onClick={() => { setLoginPersonType("pf"); setLoginForm(p => ({ ...p, cpfCnpj: "" })); }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium tracking-wider transition-colors ${
+                  loginPersonType === "pf" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}>
+                <User className="w-4 h-4" /> PF
+              </button>
+              <button type="button" onClick={() => { setLoginPersonType("pj"); setLoginForm(p => ({ ...p, cpfCnpj: "" })); }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium tracking-wider transition-colors ${
+                  loginPersonType === "pj" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}>
+                <Building2 className="w-4 h-4" /> PJ
+              </button>
+            </div>
+            <form onSubmit={handleLogin} className="space-y-3">
+              <div>
+                <Label>E-mail</Label>
+                <Input type="email" value={loginForm.email} onChange={(e) => { setLoginForm(p => ({ ...p, email: e.target.value })); setErrors(p => ({ ...p, email: "" })); }} placeholder="email@exemplo.com" />
+                {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
+              </div>
+              <div>
+                <Label>{loginPersonType === "pf" ? "CPF" : "CNPJ"}</Label>
+                <Input value={loginForm.cpfCnpj} onChange={(e) => handleLoginDocChange(e.target.value)} placeholder={loginPersonType === "pf" ? "000.000.000-00" : "00.000.000/0000-00"} />
+                {errors.cpfCnpj && <p className="text-xs text-destructive mt-1">{errors.cpfCnpj}</p>}
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Entrando...</> : "Entrar"}
+              </Button>
+            </form>
+            <p className="text-xs text-center text-muted-foreground mt-4">
+              Não possui cadastro? <button onClick={() => { setMode("register"); setErrors({}); }} className="text-primary underline">Cadastrar aqui</button>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted p-4">
       <SuccessOverlay
@@ -205,7 +302,7 @@ const Cadastro = () => {
           </form>
 
           <p className="text-xs text-center text-muted-foreground mt-4">
-            Acesso administrativo? <a href="/login" className="text-primary underline">Entrar aqui</a>
+            Já possui cadastro? <button onClick={() => { setMode("login"); setErrors({}); }} className="text-primary underline">Entrar aqui</button>
           </p>
         </CardContent>
       </Card>
